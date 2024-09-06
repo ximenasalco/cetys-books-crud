@@ -1,12 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-function BookForm({ addBook }) {
+function BookForm({ addBook, updateBook, editingBook }) {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
 
+  useEffect(()=>{
+    if (editingBook){
+      setTitle(editingBook.title);
+      setAuthor(editingBook.author);
+    }
+  }, [editingBook]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    addBook({ title, author });
+    if(editingBook){
+      updateBook({editingBook, title, author});
+    }else{
+      addBook({title, author});
+    }
     setTitle("");
     setAuthor("");
   };
@@ -15,19 +26,18 @@ function BookForm({ addBook }) {
     <form onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        placeholder="Title"
         required
       />
       <input
         type="text"
-        placeholder="Author"
         value={author}
         onChange={(e) => setAuthor(e.target.value)}
-        required
+        placeholder="Author"
       />
-      <button type="submit">Add Book</button>
+      <button type="submit">{editingBook ? "Update Book" : "Add Book"}Add Book</button>
     </form>
   );
 }
